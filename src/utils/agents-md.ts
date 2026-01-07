@@ -26,10 +26,11 @@ export function parseCurrentSkills(content: string): string[] {
  * Generate skills XML section for AGENTS.md
  * @param skills - Array of skills to include
  * @param templatePath - Optional path to custom template file
+ * @param priority - Optional priority level (default: 1)
  */
-export function generateSkillsXml(skills: Skill[], templatePath?: string): string {
+export function generateSkillsXml(skills: Skill[], templatePath?: string, priority?: number): string {
   const template = loadTemplate(templatePath);
-  const variables = generateTemplateVariables(skills);
+  const variables = generateTemplateVariables(skills, priority);
   return renderTemplate(template, variables);
 }
 

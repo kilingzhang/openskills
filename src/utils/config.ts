@@ -48,6 +48,9 @@ export function mergeOptions<T extends Record<string, any>>(
   if (!merged.template && config.template) {
     merged.template = config.template;
   }
+  if (merged.priority === undefined && config.priority !== undefined) {
+    merged.priority = config.priority;
+  }
 
   return merged;
 }

@@ -23,7 +23,7 @@ describe('sync utilities (agents-md.ts)', () => {
         { name: 'xlsx', description: 'Spreadsheet editing', location: 'global', path: '/path/to/xlsx' },
       ];
 
-      const xml = generateSkillsXml(skills, undefined);
+      const xml = generateSkillsXml(skills, undefined, undefined);
 
       expect(xml).toContain('<skills_system priority="1">');
       expect(xml).toContain('<name>pdf</name>');
@@ -40,7 +40,7 @@ describe('sync utilities (agents-md.ts)', () => {
         { name: 'test', description: 'Test skill', location: 'project', path: '/path' },
       ];
 
-      const xml = generateSkillsXml(skills, undefined);
+      const xml = generateSkillsXml(skills, undefined, undefined);
 
       expect(xml).toContain('<usage>');
       expect(xml).toContain('openskills read');
@@ -48,10 +48,20 @@ describe('sync utilities (agents-md.ts)', () => {
     });
 
     it('should generate empty skills section for empty array', () => {
-      const xml = generateSkillsXml([], undefined);
+      const xml = generateSkillsXml([], undefined, undefined);
 
       expect(xml).toContain('<available_skills>');
       expect(xml).toContain('</available_skills>');
+    });
+
+    it('should use custom priority when provided', () => {
+      const skills: Skill[] = [
+        { name: 'test', description: 'Test skill', location: 'project', path: '/path' },
+      ];
+
+      const xml = generateSkillsXml(skills, undefined, 5);
+
+      expect(xml).toContain('<skills_system priority="5">');
     });
   });
 

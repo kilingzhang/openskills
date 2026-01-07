@@ -95,7 +95,7 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
     }
   }
 
-  const xml = generateSkillsXml(skills, templatePath);
+  const xml = generateSkillsXml(skills, templatePath, finalOptions.priority);
   const content = readFileSync(outputPath, 'utf-8');
   const updated = replaceSkillsSection(content, xml);
 

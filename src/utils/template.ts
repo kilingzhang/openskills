@@ -72,17 +72,15 @@ export function loadTemplate(templatePath?: string): string {
 
 /**
  * Render template with variables
+ * Uses a single pass replacement for better performance
  */
 export function renderTemplate(template: string, variables: TemplateVariables): string {
-  let rendered = template;
-
-  // Replace all template variables
-  for (const [key, value] of Object.entries(variables)) {
-    const placeholder = `{{${key}}}`;
-    rendered = rendered.split(placeholder).join(String(value));
-  }
-
-  return rendered;
+  return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+    if (key in variables) {
+      return String(variables[key as keyof TemplateVariables]);
+    }
+    return match; // Leave unmatched placeholders as-is
+  });
 }
 
 /**

@@ -121,5 +121,22 @@ describe('config utilities', () => {
       const merged = mergeOptions(cliOptions, config);
       expect(merged).toEqual(cliOptions);
     });
+
+    it('should merge priority from config', () => {
+      const cliOptions = { yes: true };
+      const config: OpenskillsConfig = { priority: 5 };
+
+      const merged = mergeOptions(cliOptions, config);
+      expect(merged.priority).toBe(5);
+      expect(merged.yes).toBe(true);
+    });
+
+    it('should not override priority if CLI provides it', () => {
+      const cliOptions = { priority: 3 };
+      const config: OpenskillsConfig = { priority: 5 };
+
+      const merged = mergeOptions(cliOptions, config);
+      expect(merged.priority).toBe(3);
+    });
   });
 });
