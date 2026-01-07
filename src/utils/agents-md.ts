@@ -1,4 +1,9 @@
 import type { Skill } from '../types.js';
+import { 
+  loadTemplate, 
+  renderTemplate, 
+  generateTemplateVariables 
+} from './template.js';
 
 /**
  * Parse skill names currently in AGENTS.md
@@ -19,45 +24,14 @@ export function parseCurrentSkills(content: string): string[] {
 
 /**
  * Generate skills XML section for AGENTS.md
+ * @param skills - Array of skills to include
+ * @param templatePath - Optional path to custom template file
+ * @param priority - Optional priority level (default: 1)
  */
-export function generateSkillsXml(skills: Skill[]): string {
-  const skillTags = skills
-    .map(
-      (s) => `<skill>
-<name>${s.name}</name>
-<description>${s.description}</description>
-<location>${s.location}</location>
-</skill>`
-    )
-    .join('\n\n');
-
-  return `<skills_system priority="1">
-
-## Available Skills
-
-<!-- SKILLS_TABLE_START -->
-<usage>
-When users ask you to perform tasks, check if any of the available skills below can help complete the task more effectively. Skills provide specialized capabilities and domain knowledge.
-
-How to use skills:
-- Invoke: Bash("openskills read <skill-name>")
-- The skill content will load with detailed instructions on how to complete the task
-- Base directory provided in output for resolving bundled resources (references/, scripts/, assets/)
-
-Usage notes:
-- Only use skills listed in <available_skills> below
-- Do not invoke a skill that is already loaded in your context
-- Each skill invocation is stateless
-</usage>
-
-<available_skills>
-
-${skillTags}
-
-</available_skills>
-<!-- SKILLS_TABLE_END -->
-
-</skills_system>`;
+export function generateSkillsXml(skills: Skill[], templatePath?: string, priority?: number): string {
+  const template = loadTemplate(templatePath);
+  const variables = generateTemplateVariables(skills, priority);
+  return renderTemplate(template, variables);
 }
 
 /**

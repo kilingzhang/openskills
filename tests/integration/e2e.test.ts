@@ -138,14 +138,21 @@ describe('End-to-end CLI tests', () => {
       expect(existsSync(outputPath)).toBe(true);
     });
 
-    it('should reject non-.md output files', () => {
+    it('should accept various output file extensions', () => {
       const skillsDir = join(testTempDir, '.claude', 'skills');
       createTestSkill(skillsDir, 'any-skill', 'Test');
 
-      const result = runCli(`sync -y --output ${join(testTempDir, 'invalid.txt')}`);
+      // Test .mdc extension
+      const mdcPath = join(testTempDir, 'AGENTS.mdc');
+      const result1 = runCli(`sync -y --output ${mdcPath}`);
+      expect(result1.exitCode).toBe(0);
+      expect(existsSync(mdcPath)).toBe(true);
 
-      expect(result.exitCode).toBe(1);
-      expect(result.stderr).toContain('.md');
+      // Test .md extension
+      const mdPath = join(testTempDir, 'AGENTS.md');
+      const result2 = runCli(`sync -y --output ${mdPath}`);
+      expect(result2.exitCode).toBe(0);
+      expect(existsSync(mdPath)).toBe(true);
     });
   });
 
