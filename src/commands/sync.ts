@@ -5,25 +5,26 @@ import { checkbox } from '@inquirer/prompts';
 import { ExitPromptError } from '@inquirer/core';
 import { findAllSkills } from '../utils/skills.js';
 import { generateSkillsXml, replaceSkillsSection, parseCurrentSkills, removeSkillsSection } from '../utils/agents-md.js';
+import { loadConfig, mergeOptions } from '../utils/config.js';
 import type { Skill } from '../types.js';
 
 export interface SyncOptions {
   yes?: boolean;
   output?: string;
+  template?: string;
 }
 
 /**
  * Sync installed skills to a markdown file
  */
 export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
-  const outputPath = options.output || 'AGENTS.md';
-  const outputName = basename(outputPath);
+  // Load config file and merge with CLI options
+  const config = loadConfig();
+  const finalOptions = mergeOptions(options, config);
 
-  // Validate output file is markdown
-  if (!outputPath.endsWith('.md')) {
-    console.error(chalk.red('Error: Output file must be a markdown file (.md)'));
-    process.exit(1);
-  }
+  const outputPath = finalOptions.output || 'AGENTS.md';
+  const outputName = basename(outputPath);
+  const templatePath = finalOptions.template;
 
   // Create file if it doesn't exist
   if (!existsSync(outputPath)) {
@@ -31,7 +32,9 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
     if (dir && dir !== '.' && !existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }
-    writeFileSync(outputPath, `# ${outputName.replace('.md', '')}\n\n`);
+    // Create initial file with basic heading
+    const heading = outputName.replace(/\.(md|mdc)$/, '');
+    writeFileSync(outputPath, `# ${heading}\n\n`);
     console.log(chalk.dim(`Created ${outputPath}`));
   }
 
@@ -92,7 +95,7 @@ export async function syncAgentsMd(options: SyncOptions = {}): Promise<void> {
     }
   }
 
-  const xml = generateSkillsXml(skills);
+  const xml = generateSkillsXml(skills, templatePath);
   const content = readFileSync(outputPath, 'utf-8');
   const updated = replaceSkillsSection(content, xml);
 

@@ -1,0 +1,5 @@
+{
+  "output": ".github/rules/AGENTS.mdc",
+  "template": "examples/custom-template.md",
+  "priority": 1
+}

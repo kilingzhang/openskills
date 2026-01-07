@@ -23,7 +23,7 @@ describe('sync utilities (agents-md.ts)', () => {
         { name: 'xlsx', description: 'Spreadsheet editing', location: 'global', path: '/path/to/xlsx' },
       ];
 
-      const xml = generateSkillsXml(skills);
+      const xml = generateSkillsXml(skills, undefined);
 
       expect(xml).toContain('<skills_system priority="1">');
       expect(xml).toContain('<name>pdf</name>');
@@ -40,7 +40,7 @@ describe('sync utilities (agents-md.ts)', () => {
         { name: 'test', description: 'Test skill', location: 'project', path: '/path' },
       ];
 
-      const xml = generateSkillsXml(skills);
+      const xml = generateSkillsXml(skills, undefined);
 
       expect(xml).toContain('<usage>');
       expect(xml).toContain('openskills read');
@@ -48,7 +48,7 @@ describe('sync utilities (agents-md.ts)', () => {
     });
 
     it('should generate empty skills section for empty array', () => {
-      const xml = generateSkillsXml([]);
+      const xml = generateSkillsXml([], undefined);
 
       expect(xml).toContain('<available_skills>');
       expect(xml).toContain('</available_skills>');
@@ -188,20 +188,19 @@ describe('sync --output flag logic', () => {
       ];
 
       for (const path of validPaths) {
-        expect(path.endsWith('.md')).toBe(true);
+        expect(path.endsWith('.md') || path.endsWith('.mdc')).toBe(true);
       }
     });
 
-    it('should reject non-.md files', () => {
-      const invalidPaths = [
-        'AGENTS.txt',
-        'rules.yaml',
-        'config.json',
-        'noextension',
+    it('should accept .mdc files', () => {
+      const validPaths = [
+        'AGENTS.mdc',
+        '.ruler/AGENTS.mdc',
+        'docs/rules.mdc',
       ];
 
-      for (const path of invalidPaths) {
-        expect(path.endsWith('.md')).toBe(false);
+      for (const path of validPaths) {
+        expect(path.endsWith('.md') || path.endsWith('.mdc')).toBe(true);
       }
     });
   });

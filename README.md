@@ -70,10 +70,21 @@ openskills install your-org/custom-skills
 
 ### 3. Sync to AGENTS.md
 
-_NOTE: You must have a pre-existing AGENTS.md file for sync to update._
-
 ```bash
 openskills sync
+```
+
+**Advanced Options:**
+
+```bash
+# Custom output path (supports .md, .mdc, or any extension)
+openskills sync --output .github/rules/AGENTS.mdc
+
+# Custom template for different agents (Cursor, Windsurf, etc.)
+openskills sync --template ./my-template.md
+
+# Use configuration file (.openskillsrc.json) for persistent settings
+# See examples/TEMPLATES.md for details
 ```
 
 Done! Your agent now has skills with the same `<available_skills>` format as Claude Code.
@@ -308,7 +319,7 @@ Skills with same name only appear once (highest priority wins).
 
 ```bash
 openskills install <source> [options]  # Install from GitHub, local path, or private repo
-openskills sync [-y] [-o <path>]       # Update AGENTS.md (or custom output)
+openskills sync [-y] [-o <path>] [-t <path>]  # Update AGENTS.md (or custom output)
 openskills list                        # Show installed skills
 openskills read <name>                 # Load skill (for agents)
 openskills manage                      # Remove skills (interactive)
@@ -321,6 +332,46 @@ openskills remove <name>               # Remove specific skill
 - `--universal` — Install to `.agent/skills/` instead of `.claude/skills/` (advanced)
 - `-y, --yes` — Skip all prompts including overwrites (for scripts/CI)
 - `-o, --output <path>` — Custom output file for sync (default: `AGENTS.md`)
+- `-t, --template <path>` — Custom template file for sync (see Customization below)
+
+## Customization
+
+### Custom Output Path & Templates
+
+OpenSkills supports flexible output paths and custom templates for different coding agents:
+
+```bash
+# Custom output path (any extension: .md, .mdc, .txt, etc.)
+openskills sync --output .github/rules/AGENTS.mdc
+
+# Use custom template
+openskills sync --template ./templates/cursor-template.md
+
+# Both together
+openskills sync -o .windsurf/rules.md -t ./templates/windsurf.md
+```
+
+### Configuration File
+
+Store your preferences in `.openskillsrc.json`:
+
+```json
+{
+  "output": ".github/rules/AGENTS.mdc",
+  "template": "templates/custom-template.md",
+  "priority": 1
+}
+```
+
+Then simply run `openskills sync` to use your configured settings.
+
+**Template Variables:**
+- `{{SKILLS}}` - Skill XML tags
+- `{{PRIORITY}}` - Priority level
+- `{{USAGE_INSTRUCTIONS}}` - Usage instructions
+- `{{COMMAND}}` - Command to invoke skills
+
+See [examples/TEMPLATES.md](examples/TEMPLATES.md) for detailed documentation and examples for different agents (Cursor, Windsurf, Aider).
 
 ### Installation Modes
 

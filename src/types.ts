@@ -22,3 +22,16 @@ export interface SkillMetadata {
   description: string;
   context?: string;
 }
+
+export interface OpenskillsConfig {
+  output?: string;
+  template?: string;
+  priority?: number;
+}
+
+export interface TemplateVariables {
+  SKILLS: string;
+  PRIORITY: number;
+  USAGE_INSTRUCTIONS: string;
+  COMMAND: string;
+}
